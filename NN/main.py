@@ -5,7 +5,7 @@ import os
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--datapath', default='../data')
+parser.add_argument('--datapath', default='../data/MNIST/full_data/')
 parser.add_argument('--epoch', type=int,default=5)
 parser.add_argument('--learning_rate',default=10e-4)
 parser.add_argument('--img_shape', default=[28,28,1])
