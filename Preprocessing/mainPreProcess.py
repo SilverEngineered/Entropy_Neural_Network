@@ -1,4 +1,4 @@
-from preProcess import *
+from Preprocessing.preProcess import *
 import os
 
 save_path = "../data/"
