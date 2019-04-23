@@ -55,5 +55,22 @@ def splitData(data):
     test = data[int(count*.7):int(count*.9)]
     validation = data[int(count*.9):]
     return train, test, validation
-
+def scale_images(images,scaling=[0,1],dtype=np.float32):
+    """  Scale an array of images to the specified scaling range
+         inputs:
+             images -> numpy array of images in the form (x,i,j)
+             where x is the number of images
+                   i is the number of rows
+                   j is the number of columns
+             scaling ->  integer tuple (min,max)
+             where min is the minimum value after scaling
+                   max is the maximum value after scaling
+    
+         outputs:
+             numpy array of images scaled from min to max
+    """
+    min_data, max_data = [float(np.min(images)), float(np.max(images))]
+    min_scale, max_scale = [float(scaling[0]), float(scaling[1])]
+    data = ((max_scale - min_scale) * (images - min_data) / (max_data - min_data)) + min_scale
+    return data.astype(dtype)
 
