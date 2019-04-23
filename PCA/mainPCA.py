@@ -7,6 +7,7 @@ from PCA.entropy import *
 import numpy as np
 import matplotlib.pyplot as plt
 from shutil import copyfile
+import tqdm
 
 
 mnist_path = os.path.join("..", "data", "MNIST")
@@ -22,7 +23,7 @@ print("Loading location of %s" % y_train_path)
 print("Loading location of %s" % y_test_path)
 
 x_train = np.load(x_train_path)
-x_test = np.load(x_train_path)
+x_test = np.load(x_test_path)
 
 # pixels = x_train[0].reshape((28, 28))
 # plt.imshow(pixels, cmap='gray')
@@ -44,7 +45,9 @@ for variance in explained_variances:
     # transform the set according to the fit (ACTUAL PCA TAKES PLACE HERE)
     x_train_transformed = pca.transform(x_train)
     x_train_transformed = x_train_transformed.astype(np.float32)
-    x_test_transformed = pca.transform(x_train)
+    approximation = pca.inverse_transform(x_train_transformed)
+
+    x_test_transformed = pca.transform(x_test)
     x_test_transformed = x_test_transformed.astype(np.float32)
     # add the transformation and its values to the arrays
     x_train_pcas.append(x_train_transformed)
@@ -61,29 +64,35 @@ for variance in explained_variances:
     save_path = os.path.join(mnist_path, "pca_data", "dims_" + str(pca.n_components_))
     if not os.path.exists(save_path):
         os.mkdir(save_path)
-    print("Saving transformed set and analysis in %s" % save_path)
+    print("Saving transformed sets, pictures, and analysis in %s" % save_path)
     np.save(os.path.join(save_path, "x_train"), x_train_transformed)
     np.save(os.path.join(save_path, "x_test"), x_test_transformed)
     copyfile(y_train_path, os.path.join(save_path, "y_train.npy"))
     copyfile(y_test_path, os.path.join(save_path, "y_test.npy"))
 
+    plt.imshow(approximation[0].reshape(28, 28),
+               cmap=plt.cm.gray, interpolation='nearest',
+               clim=(0, 255))
+    plt.title("Reconstruction with %s principal components" % pca.n_components_)
+    plt.savefig(os.path.join(save_path, "reconstruct.png"))
+
     file = open(os.path.join(save_path, "analysis.csv"), "w")
     file.write(analysisData)
 
-plt.title("Variance vs. Dimensions")
-plt.xlabel("Explained Variance")
-plt.ylabel("Principal Components (dimensions)")
-plt.plot(explained_variances, dimensions, 'bo-')
-plt.show()
-
-plt.title("Entropy vs. Dimensions")
-plt.xlabel("Entropy")
-plt.ylabel("Principal Components (dimensions)")
-plt.plot(entropies, dimensions, 'bo-')
-plt.show()
-
-plt.title("Variance vs. Entropy")
-plt.xlabel("Explained Variance (\%)")
-plt.ylabel("Entropy")
-plt.plot(explained_variances, entropies, 'bo-')
-plt.show()
+# plt.title("Variance vs. Dimensions")
+# plt.xlabel("Explained Variance")
+# plt.ylabel("Principal Components (dimensions)")
+# plt.plot(explained_variances, dimensions, 'bo-')
+# plt.show()
+#
+# plt.title("Entropy vs. Dimensions")
+# plt.xlabel("Entropy")
+# plt.ylabel("Principal Components (dimensions)")
+# plt.plot(entropies, dimensions, 'bo-')
+# plt.show()
+#
+# plt.title("Variance vs. Entropy")
+# plt.xlabel("Explained Variance (\%)")
+# plt.ylabel("Entropy")
+# plt.plot(explained_variances, entropies, 'bo-')
+# plt.show()
