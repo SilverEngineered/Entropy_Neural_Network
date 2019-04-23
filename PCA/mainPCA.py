@@ -7,10 +7,23 @@ from PCA.entropy import *
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 mnist_path = os.path.join("..", "data", "MNIST")
+
 x_train_path = os.path.join(mnist_path, "full_data", "x_train.npy")
+x_test_path = os.path.join(mnist_path, "full_data", "x_test.npy")
+y_train_path = os.path.join(mnist_path, "full_data", "y_train.npy")
+y_test_path = os.path.join(mnist_path, "full_data", "y_test.npy")
+
 print("Loading data from %s" % x_train_path)
+print("Loading data from %s" % x_test_path)
+print("Loading data from %s" % y_train_path)
+print("Loading data from %s" % y_test_path)
+
 x_train = np.load(x_train_path)
+x_test = np.load(x_train_path)
+y_train = np.load(y_train_path)
+y_test = np.load(y_test_path)
 
 # pixels = x_train[0].reshape((28, 28))
 # plt.imshow(pixels, cmap='gray')
@@ -19,6 +32,7 @@ x_train = np.load(x_train_path)
 # arrays to store data
 explained_variances = [.99, .97, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05]
 x_train_pcas = []
+x_test_pcas = []
 dimensions = []
 entropies = []
 
@@ -31,7 +45,8 @@ for variance in explained_variances:
     # transform the set according to the fit (ACTUAL PCA TAKES PLACE HERE)
     x_train_transformed = pca.transform(x_train)
     x_train_transformed = x_train_transformed.astype(np.float32)
-    print(type(x_train_transformed[0][0]))
+    x_test_transformed = pca.transform(x_train)
+    x_test_transformed = x_test_transformed.astype(np.float32)
     # add the transformation and its values to the arrays
     x_train_pcas.append(x_train_transformed)
     dimensions.append(pca.n_components_)
@@ -49,6 +64,10 @@ for variance in explained_variances:
         os.mkdir(save_path)
     print("Saving transformed set and analysis in %s" % save_path)
     np.save(os.path.join(save_path, "x_train"), x_train_transformed)
+    np.save(os.path.join(save_path, "x_test"), x_test_transformed)
+    np.save(os.path.join(save_path, "y_train"), y_train)
+    np.save(os.path.join(save_path, "y_test"), y_test)
+
     file = open(os.path.join(save_path, "analysis.csv"), "w")
     file.write(analysisData)
 
