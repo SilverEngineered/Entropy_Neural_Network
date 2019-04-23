@@ -6,6 +6,7 @@ from sklearn.preprocessing import StandardScaler
 from PCA.entropy import *
 import numpy as np
 import matplotlib.pyplot as plt
+from shutil import copyfile
 
 
 mnist_path = os.path.join("..", "data", "MNIST")
@@ -17,13 +18,11 @@ y_test_path = os.path.join(mnist_path, "full_data", "y_test.npy")
 
 print("Loading data from %s" % x_train_path)
 print("Loading data from %s" % x_test_path)
-print("Loading data from %s" % y_train_path)
-print("Loading data from %s" % y_test_path)
+print("Loading location of %s" % y_train_path)
+print("Loading location of %s" % y_test_path)
 
 x_train = np.load(x_train_path)
 x_test = np.load(x_train_path)
-y_train = np.load(y_train_path)
-y_test = np.load(y_test_path)
 
 # pixels = x_train[0].reshape((28, 28))
 # plt.imshow(pixels, cmap='gray')
@@ -65,8 +64,8 @@ for variance in explained_variances:
     print("Saving transformed set and analysis in %s" % save_path)
     np.save(os.path.join(save_path, "x_train"), x_train_transformed)
     np.save(os.path.join(save_path, "x_test"), x_test_transformed)
-    np.save(os.path.join(save_path, "y_train"), y_train)
-    np.save(os.path.join(save_path, "y_test"), y_test)
+    copyfile(y_train_path, os.path.join(save_path, "y_train.npy"))
+    copyfile(y_test_path, os.path.join(save_path, "y_test.npy"))
 
     file = open(os.path.join(save_path, "analysis.csv"), "w")
     file.write(analysisData)
