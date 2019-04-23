@@ -55,6 +55,7 @@ def splitData(data):
     test = data[int(count*.7):int(count*.9)]
     validation = data[int(count*.9):]
     return train, test, validation
+
 def scale_images(images,scaling=[0,1],dtype=np.float32):
     """  Scale an array of images to the specified scaling range
          inputs:
