@@ -14,6 +14,7 @@ class fcn(object):
         self.bs = args.batch_size
         self.img_dims = args.img_dims
         self.num_classes = args.num_classes
+        self.trial = args.trial
         self.build()
     def build(self):
         """ Build the network by assembling the architecture and assign placeholders """
@@ -65,12 +66,12 @@ class fcn(object):
         return np.mean(accuracies)      
     def saveOutput(self):
         """ Save accuracies, losses"""
-        f=open(self.datapath + "nnacc.csv",'w')
+        f=open(self.datapath + "nnacc" + self.trial + ".csv",'w')
         for i in self.accuracies:
             f.write(str(i))
             f.write("\n")
         f.close()
-        f=open(self.datapath + "nnloss.csv",'w')
+        f=open(self.datapath + "nnloss" +self.trial +  ".csv",'w')
         for i in self.epoch_loss:
             f.write(str(i))
             f.write("\n")
