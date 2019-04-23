@@ -18,16 +18,17 @@ class fcn(object):
     def build(self):
         """ Build the network by assembling the architecture and assign placeholders """
         self.x_train, self.x_test, self.y_train, self.y_test = utils.getMNIST(self.datapath)
-        self.x = tf.placeholder(tf.float32,[None,self.img_dims])
+        self.x = tf.placeholder(float,[None,self.img_dims])
         self.y = tf.placeholder('int32', [None])
         layer1 = tf.layers.dense(self.x,256,activation=tf.nn.relu)
         layer2 = tf.layers.dense(layer1,256,activation=tf.nn.relu)
         final_layer = tf.layers.dense(layer2, self.num_classes)
         self.y_ = tf.nn.softmax(final_layer)
         self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=self.y_,labels=tf.one_hot(self.y,self.num_classes)))
-        self.optim = tf.train.AdamOptimizer(self.lr).minimize(self.loss)        
-        self.correct = tf.equal(tf.argmax(tf.one_hot(tf.cast(self.y, 'int64'), self.num_classes), 1),
-                   tf.argmax(tf.cast(self.y_, 'int64'), 1))
+        self.optim = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
+        self.choice=tf.argmax(tf.cast(self.y_,'int32'),1)
+        self.real = tf.argmax(tf.one_hot(self.y,self.num_classes),1)        
+        self.correct = tf.equal(self.choice,self.real)
         self.accuracy = tf.reduce_mean(tf.cast(self.correct, tf.float32))
     def train(self,args):
         """ Train the network with the set arguments """
@@ -55,6 +56,9 @@ class fcn(object):
         for j in range(int(len(x_test)/self.bs)-1):
             x_batch = x_test[j*self.bs:(j+1)*self.bs]    
             y_batch = y_test[j*self.bs:(j+1)*self.bs]    
+            y_=self.sess.run(self.y_,{self.x: x_batch})
+            choice=self.sess.run(self.choice,{self.x: x_batch})
+            real=self.sess.run(self.real,{self.y: y_batch})
             a = self.sess.run(self.accuracy, feed_dict={self.x: x_batch, self.y: y_batch}) 
             accuracies.append(a)
         print(np.mean(accuracies))
