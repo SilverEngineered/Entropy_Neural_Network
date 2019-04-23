@@ -7,7 +7,7 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument('--datapath', default=os.path.join("..","data","MNIST","full_data",""))
 parser.add_argument('--epoch', type=int,default=200)
-parser.add_argument('--learning_rate',type=float,default=.0001)
+parser.add_argument('--learning_rate',type=float,default=.00001)
 parser.add_argument('--img_dims', type=int,default=784)
 parser.add_argument('--num_classes', type=int,default=10)
 parser.add_argument('--batch_size', type=int, default=64)
